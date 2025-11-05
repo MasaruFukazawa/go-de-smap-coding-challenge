@@ -6,5 +6,6 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 RUN go install github.com/air-verse/air@latest
+RUN apt-get update && apt-get install -y sqlite3 && rm -rf /var/lib/apt/lists/*
 
 CMD ["air"]
