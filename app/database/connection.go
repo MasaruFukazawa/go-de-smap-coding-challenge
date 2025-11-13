@@ -9,7 +9,7 @@ type DB struct {
 	connection *gorm.DB
 }
 
-func (db *DB) Disconnection() error {
+func (db *DB) Close() error {
 	sqlDB, err := db.connection.DB()
 
 	if err != nil {
@@ -23,7 +23,7 @@ func (db *DB) GetConnection() *gorm.DB {
     return db.connection
 }
 
-func NewDBConnection(path string) (*DB, error) {
+func NewDB(path string) (*DB, error) {
 
 	connection, err := gorm.Open(sqlite.Open(path), &gorm.Config{})
 

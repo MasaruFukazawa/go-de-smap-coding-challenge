@@ -2,24 +2,39 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"github.com/joho/godotenv"
 	"github.com/MasaruFukazawa/go-de-smap-coding-challenge/database"
-	"github.com/MasaruFukazawa/go-de-smap-coding-challenge/models"
+	"github.com/MasaruFukazawa/go-de-smap-coding-challenge/domain/entities"
 )
 
 func main() {
 	fmt.Println("DBマイグレーション : Start")
 
-	conn, err := database.NewDBConnection("./db.sqlite")
+	err := godotenv.Load()
 
-	defer conn.GetConnection()
+	if err != nil {
+		fmt.Println("DBマイグレーション : Error loading .env file")
+		return
+	}
+
+	db, err := database.NewDB(os.Getenv("SQLITE3_FILE_PATH"))
 
 	if err != nil {
 		fmt.Println("DBマイグレーション : Error")
 		return
 	}
 
-	err = conn.GetConnection().AutoMigrate(&models.User{}, &models.Consumption{})
+	defer db.Close()
+
+	err = db.GetConnection().AutoMigrate(&entities.User{}, &entities.Consumption{})
+
+ 	if err != nil {
+    	fmt.Println("DBマイグレーション : Error -", err)
+     	return
+  	}
 
 	fmt.Println("DBマイグレーション : Success")
+
 	return
 }
